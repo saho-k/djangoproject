@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width-device-width, initial-scale=1, maximum-scale=1"/>
+    <title>Search Results - Edenthought</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+
+        <a class="navbar-brand main-heading"> 
+                
+          &nbsp; Edenthought 
+        
+        </a>
+    
+    
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+    
+        </button>
+    
+    
+          <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
+    
+            
+            <ul class="navbar-nav ms-auto">
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+    
+    
+              <li class="nav-item">
+          
+                <a class="btn btn-primary navbar-btn" type="button"  href="{% url 'register' %}">Register</a>
+    
+              </li>
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+              
+    
+              <li class="nav-item">
+    
+                <a class="btn btn-primary navbar-btn" type="button"  href="{% url 'my-login' %}">Login</a>
+    
+              </li>
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+              
+    
+            </ul>
+          
+            
+          </div>
+    
+    
+    </nav>
+
+    <br>
+    <br>
+
+<form action="{% url 'search-results' %}" method="POST" class="form-inline d-flex justify-content-center">
+    {% csrf_token %}
+    <div class="col-lg-6 col-md-8 col-sm-10 d-flex">
+        <input class="form-control flex-grow-1 mr-2" type="search" placeholder="Search" aria-label="Search" name="q">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </div>
+</form>
+
+
+<div class="container mt-5">
+    <h2 class="text-center">Search Results for "{{ query }}"</h2>
+    <br>
+
+    <!-- 결과 목록 -->
+    <!-- 결과 목록 -->
+    <div class ="row"> 
+                {% for result in search_results %}
+              <div class="col-md-4">  
+                <!-- Assuming each 'result' has a 'get_absolute_url' method or similar to get the detail URL -->
+                  <div class="list-group-item rounded-box">
+                      <a href="{{ result.get_absolute_url }}">
+                        <span class="title-text">{{ result.title|truncatechars:15 }}</span>
+
+                      </a>
+
+                      {% if result.comments.last %}
+                      <span class="comment-text">{{ result.comments.last.text|truncatechars:15 }}</span>
+                      <span class="date-text">{{ result.comments.last.date|date:"F d, Y" }}</span> <!-- 날짜 정보 추가 -->
+
+                      {% else %}
+                      <span>No comments yet.</span>
+                      {% endif %}
+                  </div>
+              </div>
+      
+                {% empty %}
+                <li class="list-group-item">No results found for "{{ query }}"</li>
+                {% endfor %}
+      </div>
+
+
+
+</div>
+
+<!-- Scripts -->
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="{% static 'js/app.js' %}"></script>
+
+</body>
+</html>

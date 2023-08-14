@@ -1,0 +1,66 @@
+
+
+.form-layout{
+
+    border-radius: 20px;
+    width: 500px;
+
+}
+
+.message-text{
+
+
+    color: white;
+
+
+}
+
+
+
+
+
+.comment-box {
+    border: 1px solid #e1e1e1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+
+
+
+/* 결과물 출력 */
+.rounded-box {
+    border: 1px solid #e1e1e1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    margin-right: 30px; /* 추가한 코드: 오른쪽 마진 추가 */
+
+}
+
+.title-text, .comment-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+
+}
+
+.list-group-item {
+    max-width: 250px; /* 이 값을 조절하여 알맞은 크기로 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    margin-bottom: 30px;
+    margin-right: 30px;
+}
+
+
+
+.date-text {
+    display: block;
+    font-size: 0.8rem; /* 댓글보다 작은 크기로 설정 */
+    color: gray;       /* 회색으로 표시 */
+    margin-top: 5px;   /* 댓글과의 간격 설정 */
+}
+/* static/css/styles.css */

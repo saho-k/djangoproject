@@ -1,0 +1,222 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width-device-width, initial-scale=1, maximum-scale=1"/>
+    <title>Search Results - Edenthought</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/litera/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+      <!-- Load jQuery at the top -->
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+
+
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
+
+        <a class="navbar-brand main-heading" > 
+            &nbsp;   
+            &nbsp;
+            어디서 걸려온건지 정보 공유 부탁드립니다
+          
+        </a>
+    
+    
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+    
+        </button>
+    
+    
+          <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
+    
+            
+            <ul class="navbar-nav ms-auto">
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+    
+    
+              <li class="nav-item">
+          
+                <!-- <a class="btn btn-primary navbar-btn" type="button"  href="{% url 'register' %}">Register</a> -->
+    
+              </li>
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+              
+    
+              <li class="nav-item">
+    
+                <!-- <a class="btn btn-primary navbar-btn" type="button"  href="{% url 'my-login' %}">Login</a> -->
+    
+              </li>
+    
+    
+              &nbsp;     &nbsp;     &nbsp; 
+              
+    
+            </ul>
+          
+            
+          </div>
+    
+    
+    </nav>
+
+    <br>
+    <br>
+
+
+     
+
+ 
+    <form action="{% url 'search-results' %}" method="POST" class="form-inline d-flex justify-content-center">
+        {% csrf_token %}
+        <div class="col-lg-6 col-md-8 col-sm-10 d-flex">
+            <input class="form-control flex-grow-1 mr-2" type="search" placeholder="Search" aria-label="Search" name="q">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </div>
+     </form>
+
+     <div class="container mt-5">
+    
+        {% block content %}
+            <h2>{{ thought.title }}</h2>
+            <p>{{ thought.content }}</p> <!-- Assuming 'content' is a field in your Thought model -->
+    
+            <!-- Comments Section Start -->
+            <hr>
+            <h3>Comments:</h3>
+            
+            <div id="comments-list"> 
+                <!-- Displaying Existing Comments -->
+                {% for comment in thought.comments.all %}
+                    <div class="comment-box mt-3">
+                                    <strong>
+                                        {% if comment.author %}
+                                            {{ comment.author.name }}
+                                        {% else %}
+                                            user   
+                                        {% endif %}
+                                    </strong>  
+                                    &nbsp;   &nbsp;<p> {{ comment.created_date|date:"F - d - Y" }}    </p> 
+                                    
+                                    <br>
+                                     
+   
+                                    {{ comment.text }}
+                        <hr>
+                    </div>
+                {% empty %}
+                    <p>No comments yet. Be the first one to comment!</p>
+                {% endfor %}
+                <!-- Comments Section End -->
+                </div>
+
+
+            <form id="comment-form" action="{% url 'add_comment_to_thought' thought.id %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="comment-text">Add a comment:</label>
+                    <textarea name="text" id="comment-text" rows="4" class="form-control"></textarea>
+                </div>
+                <div class="form-group mt-2">
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </div>
+            </form>
+           
+        {% endblock %}
+
+
+
+
+        <script>
+            $(document).ready(function() {
+                $("#comment-form").on('submit', function(e) {
+                    e.preventDefault(); // 기본 폼 제출을 방지
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                // 댓글을 페이지에 추가
+                                var newComment = `
+                                                    <div class="comment-box mt-3">
+                                                        <strong>Username</strong> said: <br>
+                                                        ${response.comment_text}
+                                                        <hr>
+                                                    </div>
+                                                    `;
+
+                               
+                                $("#comments-list").prepend(newComment);
+                                $("#comment-text").val(''); // textarea 초기화
+                            } else {
+                                alert('댓글 추가에 실패했습니다.');
+                            }
+                        },
+                        error: function() {
+                            alert('서버와 통신 중 에러가 발생했습니다.');
+                        }
+                    });
+                });
+            });
+
+            //AJAX 요청에서는 CSRF 토큰을 함께 보내야 합니다. jQuery를 사용하면 아래와 같이 전역 설정을 통해 모든 AJAX 요청에 CSRF 토큰을 추가할 수 있습니다.
+            function getCookie(name) {
+                var value = "; " + document.cookie;
+                var parts = value.split("; " + name + "=");
+                if (parts.length == 2) return parts.pop().split(";").shift();
+            }
+
+            $.ajaxSetup({
+                headers: { "X-CSRFToken": getCookie("csrftoken") }
+            });
+
+
+            </script>
+
+                
+
+
+
+    </div>
+
+
+
+    
+
+
+
+<!-- Scripts -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="{% static 'js/app.js' %}"></script>
+ 
+</body>
+
+
+
+
+</html>
+
+
+
